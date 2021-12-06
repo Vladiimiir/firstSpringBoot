@@ -85,6 +85,7 @@ public class UserServiceImpl implements UserService{
         return user;
     }
 
+
     @Transactional
     @Override
     public void verify(String email) {
