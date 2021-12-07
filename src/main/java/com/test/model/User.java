@@ -57,6 +57,9 @@ public class User {
                 inverseJoinColumns = @JoinColumn(name = "authority_id"))
     private List<Authority> authorities;
 
+    @Column(name = "reset_password_token", unique = true)
+    private String resetPasswordToken;
+
     public User() {
         this.status = Status.UNVERIFIED;
     }
@@ -158,6 +161,14 @@ public class User {
 
     public void setAuthorities(List<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
+    }
+
+    public void setResetPasswordToken(String resetPasswordToken) {
+        this.resetPasswordToken = resetPasswordToken;
     }
 
     @Override
