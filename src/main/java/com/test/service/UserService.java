@@ -22,4 +22,6 @@ public interface UserService {
     User getByEmailAndPassword(String email, String password) throws NotVerifiedUserException, NotFoundException, BadRequestException;
     void verify(String email);
     void sendEmail(String email);
+    User upToResetPassword(String email) throws NotFoundException;
+    void resetPassword(User user, String newPassword, String repeatedPassword) throws NotFoundException;
 }

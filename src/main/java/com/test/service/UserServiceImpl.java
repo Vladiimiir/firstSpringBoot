@@ -7,11 +7,13 @@ import com.test.model.Address;
 import com.test.model.Status;
 import com.test.model.User;
 import com.test.repository.UserRepository;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Optional;
 
@@ -110,9 +112,37 @@ public class UserServiceImpl implements UserService{
         updatedUser.setEmail(user.getEmail());
         updatedUser.setPassword(user.getPassword());
         updatedUser.setAddress(user.getAddress());
+        updatedUser.setGender(user.getGender());
+        updatedUser.setStatus(user.getStatus());
         updatedUser.setPhone(user.getPhone());
+        updatedUser.setAuthorities(user.getAuthorities());
+        updatedUser.setResetPasswordToken(user.getResetPasswordToken());
         save(updatedUser);
         return updatedUser;
     }
 
+    @Transactional
+    @Override
+    public User upToResetPassword(String email) throws NotFoundException {
+        User user = getByEmail(email);
+        if (user != null && user.getStatus().equals(Status.VERIFIED)) {
+            String message = "Your one-time verification key is  ";
+            String token = RandomString.make(24);
+            user.setResetPasswordToken(token);
+            update(user);
+            mailSender.sendSimpleMessage(user.getEmail(), message, token);
+            return user;
+        } else
+            throw new NotFoundException("user not found by this email");
+    }
+
+    @Transactional
+    @Override
+    public void resetPassword(User user, String newPassword, String repeatedPassword) throws NotFoundException {
+        if (!newPassword.equals(repeatedPassword))
+            throw new InputMismatchException("Passwords doesn't match");
+//        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(newPassword);
+        update(user);
+    }
 }

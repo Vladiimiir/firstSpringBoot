@@ -77,4 +77,11 @@ public class UserController {
         userService.verify(email);
     }
 
+    @GetMapping("/resetPassword/Step1")
+    public void resetPassword(@RequestParam String email) throws NotFoundException {
+        User user = userService.upToResetPassword(email);
+        //TODO and redirects to the page where the user can input the token which sent to user's email
+    }
+
+
 }

@@ -16,4 +16,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> getAllByName(String name);
     List<User> getAllByAddress(Address address);
     User getUserByEmailAndPassword(String email, String password);
+    @Query("from User where resetPasswordToken =?1")
+    User getToken(String token);
 }
