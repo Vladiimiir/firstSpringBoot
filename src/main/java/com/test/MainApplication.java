@@ -1,4 +1,5 @@
 package com.test;
+import com.test.exception.BadRequestException;
 import com.test.exception.NotFoundException;
 import com.test.exception.NotVerifiedUserException;
 import com.test.model.Status;
@@ -11,7 +12,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 @SpringBootApplication
 public class MainApplication {
 
-    public static void main(String[] args) throws NotFoundException, NotVerifiedUserException {
+    public static void main(String[] args) throws NotFoundException, NotVerifiedUserException, BadRequestException {
         SpringApplication.run(MainApplication.class, args);
 
 //        ConfigurableApplicationContext context = SpringApplication.run(MainApplication.class, args);
@@ -19,7 +20,8 @@ public class MainApplication {
 //        AddressService addressService = (AddressService) context.getBean("addressServiceImpl");
 //        UserController controller = (UserController) context.getBean("userController") ;
 //        UserService userService = (UserService) context.getBean("userServiceImpl");
-//        User user = userService.getByEmailAndPassword("bob.bob@mail.ru", "bob123");
+//        User user = userService.getByEmail("admin.admin@gmail.com");
+//        userService.resetPassword(user, "root", "root");
 //        System.out.println(user.getStatus() == Status.UNVERIFIED);
 //        System.out.println(userService.getByEmailAndPassword("bob.bob@mail.ru", "bob123"));
 //        User user1 = new User("admin", "admin.admin@mail.com", "root");
