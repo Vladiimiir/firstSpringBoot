@@ -9,6 +9,7 @@ import com.test.model.User;
 import com.test.repository.UserRepository;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -117,18 +118,22 @@ public class UserServiceImpl implements UserService{
         updatedUser.setPhone(user.getPhone());
         updatedUser.setAuthorities(user.getAuthorities());
         updatedUser.setResetPasswordToken(user.getResetPasswordToken());
+        updatedUser.setResetPasswordTokeCreationDate(user.getResetPasswordTokeCreationDate());
         save(updatedUser);
         return updatedUser;
     }
 
     @Transactional
     @Override
+    @Async
     public User upToResetPassword(String email) throws NotFoundException {
         User user = getByEmail(email);
         if (user != null && user.getStatus().equals(Status.VERIFIED)) {
             String message = "Your one-time verification key is  ";
             String token = RandomString.make(24);
             user.setResetPasswordToken(token);
+            Long creationDate = System.currentTimeMillis();
+            user.setResetPasswordTokeCreationDate(creationDate);
             update(user);
             mailSender.sendSimpleMessage(user.getEmail(), message, token);
             return user;
@@ -138,11 +143,14 @@ public class UserServiceImpl implements UserService{
 
     @Transactional
     @Override
-    public void resetPassword(User user, String newPassword, String repeatedPassword) throws NotFoundException {
+    public void resetPassword(User user, String newPassword, String repeatedPassword) throws NotFoundException, BadRequestException {
         if (!newPassword.equals(repeatedPassword))
             throw new InputMismatchException("Passwords doesn't match");
 //        String encodedPassword = passwordEncoder.encode(newPassword);
-        user.setPassword(newPassword);
-        update(user);
+        if (System.currentTimeMillis() - user.getResetPasswordTokeCreationDate() < 120000){
+            user.setPassword(newPassword);
+            update(user);
+        } else
+            throw new BadRequestException("Your token date is expired!");
     }
 }

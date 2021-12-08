@@ -83,5 +83,4 @@ public class UserController {
         //TODO and redirects to the page where the user can input the token which sent to user's email
     }
 
-
 }

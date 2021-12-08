@@ -60,6 +60,9 @@ public class User {
     @Column(name = "reset_password_token", unique = true)
     private String resetPasswordToken;
 
+    @Column(name = "reset_password_token_creation_date")
+    private Long resetPasswordTokeCreationDate;
+
     public User() {
         this.status = Status.UNVERIFIED;
     }
@@ -169,6 +172,14 @@ public class User {
 
     public void setResetPasswordToken(String resetPasswordToken) {
         this.resetPasswordToken = resetPasswordToken;
+    }
+
+    public Long getResetPasswordTokeCreationDate() {
+        return resetPasswordTokeCreationDate;
+    }
+
+    public void setResetPasswordTokeCreationDate(Long resetPasswordTokeCreationDate) {
+        this.resetPasswordTokeCreationDate = resetPasswordTokeCreationDate;
     }
 
     @Override
